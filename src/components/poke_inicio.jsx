@@ -1,9 +1,11 @@
 import "./card.css";
 import { Card } from "./card.jsx";
 import { Buscador } from "./buscador.jsx";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ThemeContext } from "./ThemeContext.jsx";
 
 export const PokeInicio = () => {
+  const { darkmode, toggleTheme } = useContext(ThemeContext);
   const [busqueda, setBusqueda] = useState("");
   const [pokemon, setPokemon] = useState([]);
 
@@ -39,18 +41,24 @@ export const PokeInicio = () => {
 
   return (
     <>
-      <div className="p-6">
-        <h1 className="text-xl font-bold text-center mb-6">Pokédex</h1>
-        <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {pokemonFiltrados.map((pokeman) => (
-            <Card
-              key={pokeman.id}
-              name={pokeman.name}
-              sprites={pokeman.sprites}
-              price={pokeman.base_experience}
-            />
-          ))}
+      <div style={{ backgroundColor: darkmode ? "black" : "white" }}>
+        <div className="p-6">
+          <h1 className="text-xl font-bold text-center mb-6">Pokédex</h1>
+          <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
+          <button onClick={toggleTheme} className=" bg-amber-700">
+            Cambiar a {darkmode ? "Claro" : "Oscuro"}
+          </button>
+        <h2>Modo {darkmode ? "Oscuro" : "Claro"}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {pokemonFiltrados.map((pokeman) => (
+              <Card
+                key={pokeman.id}
+                name={pokeman.name}
+                sprites={pokeman.sprites}
+                price={pokeman.base_experience}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </>
