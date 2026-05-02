@@ -17,6 +17,7 @@ export const PokeInicio = () => {
     setCurrentPage(1); // vuelve a la página 1 al buscar
   };
   const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const  [pokemons, setPokemons] = useState([]);  
   const [modalAbierto, setModalAbierto] = useState(false);
   const pokemonPerPage = 12;
 
@@ -27,6 +28,7 @@ export const PokeInicio = () => {
           "https://pokeapi.co/api/v2/pokemon?limit=1350",
         );
         const data = await respuesta.json();
+        setPokemons(data.results); // guarda la lista de pokemones con sus URLs
 
         // Para obtener la imagen, necesito hacer fetch a cada URL individual
         const detalles = await Promise.all(
