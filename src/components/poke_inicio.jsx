@@ -24,7 +24,7 @@ export const PokeInicio = () => {
     const obtenerPokemones = async () => {
       try {
         const respuesta = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=809",
+          "https://pokeapi.co/api/v2/pokemon?limit=1350",
         );
         const data = await respuesta.json();
 
