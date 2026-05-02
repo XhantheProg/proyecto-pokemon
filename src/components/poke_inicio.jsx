@@ -3,21 +3,27 @@ import { Card } from "./card.jsx";
 import { Buscador } from "./buscador.jsx";
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "./ThemeContext.jsx";
+import { Pagination } from "./pagination.jsx";
+import { Modal } from "./Modal.jsx";
 
 export const PokeInicio = () => {
   const { darkmode, toggleTheme } = useContext(ThemeContext);
   const [busqueda, setBusqueda] = useState("");
   const [pokemon, setPokemon] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const pokemonPerPage = 8;
 
   useEffect(() => {
     const obtenerPokemones = async () => {
       try {
         const respuesta = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=20",
+          "https://pokeapi.co/api/v2/pokemon?limit=100000",
         );
         const data = await respuesta.json();
 
-        // Para obtener la imagen, necesitas hacer fetch a cada URL individual
+        // Para obtener la imagen, necesito hacer fetch a cada URL individual
         const detalles = await Promise.all(
           data.results.map(async (poke) => {
             const res = await fetch(poke.url);
@@ -25,8 +31,10 @@ export const PokeInicio = () => {
             return detalle; // incluye .sprites.front_default
           }),
         );
+        
+        setPokemon(soloConImagen);
 
-        setPokemon(detalles); // ahora cada item tiene imagen
+        setPokemon(detalles); // actualiza el estado con los detalles completos
       } catch (error) {
         console.error("Error al obtener pokemon:", error);
       }
@@ -39,28 +47,71 @@ export const PokeInicio = () => {
     pokeman.name.toLowerCase().includes(busqueda.toLowerCase()),
   );
 
+  const lastIndex = currentPage * pokemonPerPage;
+  const firstIndex = lastIndex - pokemonPerPage;
+  const currentPokemon = pokemonFiltrados.slice(firstIndex, lastIndex);
+
+  const abrirModal = (pokeman) => {
+    setSelectedPokemon(pokeman);
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => {
+    setSelectedPokemon(null);
+    setModalAbierto(false);
+  };
+
   return (
     <>
-      <div style={{ backgroundColor: darkmode ? "black" : "white" }}>
+      <header className="bg-red-600 px-6 py-4 flex items-center justify-between">
+        {/* Lado izquierdo — pokébola + título */}
+        <div className="flex items-center gap-3">
+          {/* Pokébola simple con divs */}
+          <div className="w-8 h-8 rounded-full bg-white border-2 border-gray-800 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1/2 bg-red-600"></div>
+            <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gray-800 -translate-y-1/2"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-gray-800 z-10"></div>
+          </div>
+          <h1 className="text-white text-2xl font-medium tracking-wide">
+            Pokédex
+          </h1>
+        </div>
+
+        {/* Lado derecho — botón modo */}
+        <button
+          onClick={toggleTheme}
+          className="flex items-center gap-2 bg-white/20 hover:bg-black/60 text-white text-sm px-4 py-1.5 rounded-full transition duration-200"
+        >
+          {darkmode ? "☀ Modo Claro" : "☾ Modo Oscuro"}
+        </button>
+      </header>
+      <div
+        className={`min-h-screen ${darkmode ? "bg-[#1a1a2e]" : "bg-gray-100"}`}
+      >
         <div className="p-6">
-          <h1 className="text-xl font-bold text-center mb-6">Pokédex</h1>
           <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
-          <button onClick={toggleTheme} className=" bg-amber-700">
-            Cambiar a {darkmode ? "Claro" : "Oscuro"}
-          </button>
-        <h2>Modo {darkmode ? "Oscuro" : "Claro"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {pokemonFiltrados.map((pokeman) => (
+            {currentPokemon.map((pokeman) => (
               <Card
                 key={pokeman.id}
                 name={pokeman.name}
                 sprites={pokeman.sprites}
                 price={pokeman.base_experience}
+                onSelect={() => abrirModal(pokeman)}
               />
             ))}
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPokemon={pokemonFiltrados.length}
+            pokemonPerPage={pokemonPerPage}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       </div>
+      {modalAbierto && (
+        <Modal pokemon={selectedPokemon} onClose={cerrarModal} /> //on close es la función que cierra el modal, y pokemon es el pokémon seleccionado para mostrar en el modal
+      )}
     </>
   );
 };
