@@ -8,13 +8,14 @@ import { Modal } from "./Modal.jsx";
 
 export const PokeInicio = () => {
   const { darkmode, toggleTheme } = useContext(ThemeContext);
+  const [pokemon, setPokemon] = useState([]);
+  const [busqueda, setBusqueda] = useState(""); 
+  const [currentPage, setCurrentPage] = useState(1); // currentPage es el número de página actual, y setCurrentPage es la función para actualizarlo. 
+  // Empieza en 1 porque queremos mostrar la primera página al cargar.
   const handleBusqueda = (valor) => {
     setBusqueda(valor);
     setCurrentPage(1); // vuelve a la página 1 al buscar
   };
-  const [pokemon, setPokemon] = useState([]);
-    const [busqueda, setBusqueda] = useState(""); 
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const pokemonPerPage = 12;
