@@ -8,18 +8,22 @@ import { Modal } from "./Modal.jsx";
 
 export const PokeInicio = () => {
   const { darkmode, toggleTheme } = useContext(ThemeContext);
-  const [busqueda, setBusqueda] = useState("");
+  const handleBusqueda = (valor) => {
+    setBusqueda(valor);
+    setCurrentPage(1); // vuelve a la página 1 al buscar
+  };
   const [pokemon, setPokemon] = useState([]);
+    const [busqueda, setBusqueda] = useState(""); 
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
-  const pokemonPerPage = 8;
+  const pokemonPerPage = 12;
 
   useEffect(() => {
     const obtenerPokemones = async () => {
       try {
         const respuesta = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=100000",
+          "https://pokeapi.co/api/v2/pokemon?limit=809",
         );
         const data = await respuesta.json();
 
@@ -31,8 +35,8 @@ export const PokeInicio = () => {
             return detalle; // incluye .sprites.front_default
           }),
         );
+
         
-        setPokemon(soloConImagen);
 
         setPokemon(detalles); // actualiza el estado con los detalles completos
       } catch (error) {
@@ -60,6 +64,8 @@ export const PokeInicio = () => {
     setSelectedPokemon(null);
     setModalAbierto(false);
   };
+
+  
 
   return (
     <>
@@ -89,7 +95,7 @@ export const PokeInicio = () => {
         className={`min-h-screen ${darkmode ? "bg-[#1a1a2e]" : "bg-gray-100"}`}
       >
         <div className="p-6">
-          <Buscador busqueda={busqueda} setBusqueda={setBusqueda} />
+          <Buscador busqueda={busqueda} setBusqueda={handleBusqueda} />
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentPokemon.map((pokeman) => (
               <Card

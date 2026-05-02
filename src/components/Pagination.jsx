@@ -23,7 +23,7 @@ export const Pagination = ({ currentPage, totalPokemon, pokemonPerPage, setCurre
   };
 
   return (
-    <div className="flex gap-2 justify-center mt-6 pb-6 flex-wrap">
+    <footer className="sticky bottom-0 bg-inherit py-3 flex gap-2 justify-center flex-wrap">
       {/* Botón anterior */}
       <button
         onClick={() => setCurrentPage(currentPage - 1)}
@@ -60,6 +60,6 @@ export const Pagination = ({ currentPage, totalPokemon, pokemonPerPage, setCurre
       >
         →
       </button>
-    </div>
+    </footer>
   );
 };
