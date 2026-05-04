@@ -22,33 +22,21 @@ export const PokeInicio = () => {
   const pokemonPerPage = 12;
 
   useEffect(() => {
-    const obtenerPokemones = async () => {
-      try {
-        const respuesta = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=1350",
-        );
-        const data = await respuesta.json();
-        setPokemons(data.results); // guarda la lista de pokemones con sus URLs
+  const obtenerPokemones = async () => {
+    try {
+      const respuesta = await fetch(
+        "https://pokeapi.co/api/v2/pokemon?limit=1500"
+      );
+      const data = await respuesta.json();
+      setPokemon(data.results); // 👈 solo guarda [{name, url}, {name, url}...]
 
-        // Para obtener la imagen, necesito hacer fetch a cada URL individual
-        const detalles = await Promise.all(
-          data.results.map(async (poke) => {
-            const res = await fetch(poke.url);
-            const detalle = await res.json();
-            return detalle; // incluye .sprites.front_default
-          }),
-        );
+    } catch (error) {
+      console.error("Error al obtener pokemon:", error);
+    }
+  };
 
-        
-
-        setPokemon(detalles); // actualiza el estado con los detalles completos
-      } catch (error) {
-        console.error("Error al obtener pokemon:", error);
-      }
-    };
-
-    obtenerPokemones();
-  }, []);
+  obtenerPokemones();
+}, []);
 
   const pokemonFiltrados = pokemon.filter((pokeman) =>
     pokeman.name.toLowerCase().includes(busqueda.toLowerCase()),
@@ -59,6 +47,7 @@ export const PokeInicio = () => {
   const currentPokemon = pokemonFiltrados.slice(firstIndex, lastIndex);
 
   const abrirModal = (pokeman) => {
+    console.log("pokeman recibido:", pokeman);
     setSelectedPokemon(pokeman);
     setModalAbierto(true);
   };
@@ -100,13 +89,13 @@ export const PokeInicio = () => {
         <div className="p-6">
           <Buscador busqueda={busqueda} setBusqueda={handleBusqueda} />
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {currentPokemon.map((pokeman) => (
+            {currentPokemon.map((pokeman, index) => (
               <Card
-                key={pokeman.id}
+                key={`${pokeman.name}-${index}`}
                 name={pokeman.name}
-                sprites={pokeman.sprites}
+                url={pokeman.url}  
                 price={pokeman.base_experience}
-                onSelect={() => abrirModal(pokeman)}
+                onSelect={abrirModal}
               />
             ))}
           </div>
