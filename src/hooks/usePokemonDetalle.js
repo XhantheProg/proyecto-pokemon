@@ -10,7 +10,7 @@ export const usePokemonDetalle = (url) => {
       try {
         const res = await fetch(url);
         const data = await res.json();
-        setDetalle(data);
+        // setDetalle(data);
         if (data.sprites?.front_default) {
             setDetalle(data);
         }
