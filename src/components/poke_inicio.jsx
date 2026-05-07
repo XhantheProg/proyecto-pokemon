@@ -9,7 +9,7 @@ import { Modal } from "./Modal.jsx";
 export const PokeInicio = () => {
   const { darkmode, toggleTheme } = useContext(ThemeContext);
   const [pokemon, setPokemon] = useState([]);
-  const [busqueda, setBusqueda] = useState("");
+  const [busqueda, setBusqueda] = useState(""); 
   const [currentPage, setCurrentPage] = useState(1); // currentPage es el número de página actual, y setCurrentPage es la función para actualizarlo. 
   // Empieza en 1 porque queremos mostrar la primera página al cargar.
   const handleBusqueda = (valor) => {
@@ -17,36 +17,27 @@ export const PokeInicio = () => {
     setCurrentPage(1); // vuelve a la página 1 al buscar
   };
   const [selectedPokemon, setSelectedPokemon] = useState(null);
-  const [pokemons, setPokemons] = useState([]);
+  const  [pokemons, setPokemons] = useState([]);  
   const [modalAbierto, setModalAbierto] = useState(false);
   const pokemonPerPage = 12;
 
   useEffect(() => {
-    const obtenerPokemones = async () => {
-      try {
-        const respuesta = await fetch(
-          "https://pokeapi.co/api/v2/pokemon?limit=1500"
-        );
-        const data = await respuesta.json();
-        // // const getId = (url) => url.split("/").filter(Boolean).pop(); // función para extraer el ID del Pokémon de su URL
-        // setPokemon(data.results); // solo guarda [{name, url}, {name, url}...]
+  const obtenerPokemones = async () => {
+    try {
+      const respuesta = await fetch(
+        "https://pokeapi.co/api/v2/pokemon?limit=1500"
+      );
+      const data = await respuesta.json();
+      // const getId = (url) => url.split("/").filter(Boolean).pop(); // función para extraer el ID del Pokémon de su URL
+      setPokemon(data.results); // solo guarda [{name, url}, {name, url}...]
 
-        const pokemonFiltrados = data.results.filter((pokemon) => {
-          const id = parseInt(pokemon.url.split("/").filter(Boolean).pop());
-          console.log(id); // ¿están saliendo números o NaN?
-          return id <= 1010;
-        });
-        console.log("Pokemones filtrados", pokemon.length);
-        
-        setPokemon(pokemonFiltrados);
+    } catch (error) {
+      console.error("Error al obtener pokemon:", error);
+    }
+  };
 
-      } catch (error) {
-        console.error("Error al obtener pokemon:", error);
-      }
-    };
-
-    obtenerPokemones();
-  }, []);
+  obtenerPokemones();
+}, []);
 
   const pokemonFiltrados = pokemon.filter((pokeman) =>
     pokeman.name.toLowerCase().includes(busqueda.toLowerCase()),
@@ -67,7 +58,7 @@ export const PokeInicio = () => {
     setModalAbierto(false);
   };
 
-
+  
 
   return (
     <>
@@ -103,7 +94,7 @@ export const PokeInicio = () => {
               <Card
                 key={`${pokeman.name}-${index}`}
                 name={pokeman.name}
-                url={pokeman.url}
+                url={pokeman.url}  
                 price={pokeman.base_experience}
                 onSelect={abrirModal}
               />

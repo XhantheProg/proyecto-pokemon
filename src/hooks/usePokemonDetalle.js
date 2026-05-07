@@ -1,4 +1,4 @@
-
+// este archivo es un custom hook para obtener el detalle de un pokemon a partir de su URL
 import { useState, useEffect } from "react";
 
 export const usePokemonDetalle = (url) => {
